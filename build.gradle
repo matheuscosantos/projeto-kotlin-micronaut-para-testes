@@ -1,4 +1,3 @@
-
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.4.30"
     id("org.jetbrains.kotlin.kapt") version "1.4.30"
@@ -6,6 +5,8 @@ plugins {
     id("org.jetbrains.kotlin.plugin.jpa") version "1.4.30"
     id("com.github.johnrengelman.shadow") version "6.1.0"
     id("io.micronaut.application") version "1.4.2"
+
+    id 'info.solidsoft.pitest' version '1.6.0'
 }
 
 version = "0.1"
@@ -36,14 +37,20 @@ dependencies {
     implementation("io.micronaut.sql:micronaut-jdbc-hikari")
 //    implementation("io.swagger.core.v3:swagger-annotations")
 //    implementation("javax.annotation:javax.annotation-api")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.4.30")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.30")
     implementation("io.micronaut:micronaut-validation")
     runtimeOnly("ch.qos.logback:logback-classic")
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
     runtimeOnly("com.h2database:h2")
 //    runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:2.13.2")
 
+    // Testing
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.1")
+    testImplementation("org.junit.platform:junit-platform-runner:1.7.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.1")
+    testImplementation("io.micronaut.test:micronaut-test-junit5")
+    pitest('org.pitest:pitest-junit5-plugin:0.14')
 }
 
 application {
@@ -64,4 +71,11 @@ tasks {
             jvmTarget = "11"
         }
     }
+}
+
+pitest {
+    outputFormats.set(['XML', 'HTML'])
+    testPlugin.set("junit5")
+    mainSourceSets.set([sourceSets.main])
+    testSourceSets.set([sourceSets.test])
 }
